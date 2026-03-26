@@ -1,121 +1,65 @@
-# Results Integration Guide
+# Results Integration Guide (Submission Snapshot)
 
-Use this file when concrete experiment outputs arrive from the project/experiment agent.
-
----
-
-## 1) What artifacts to collect per run
-For each completed run, try to gather:
-- `config.json`
-- `summary.json`
-- `final_evaluation.json`
-- `evaluations.json`
-- `best_model_metrics.json` (if present)
-- run directory name
-
-If only one file is available, `summary.json` is the minimum useful input for the final comparison table.
+Use this file as the canonical map between report claims and repository artifacts.
 
 ---
 
-## 2) Where each artifact goes in the report
+## 1) Primary evidence bundles
 
-### `summary.json`
-Use for the main final-results table:
-- mean coverage
-- success rate
-- death rate
-- timeout rate
-- mean reward
-- mean episode length
-- total timesteps
-- algorithm / observation / reward labels
+### Controlled 3×3 PPO observation/reward matrix
+- `results/observation_reward_sweep/leaderboard.csv`
+- `results/observation_reward_sweep/summary.md`
+- `results/observation_reward_sweep/learning_curves.png`
+- `results/observation_reward_sweep/mean_coverage_by_combo.png`
+- `results/observation_reward_sweep/mean_reward_by_combo.png`
+- `results/observation_reward_sweep/success_rate_by_combo.png`
 
-### `evaluations.json`
-Use for learning-curve plots:
-- coverage vs timesteps
-- success rate vs timesteps
-- death rate vs timesteps
-- optionally reward vs timesteps
+### Long-run frontier baseline
+- `runs/20260325-192838-ppo_frontier_dense/summary.json`
+- `runs/20260325-192838-ppo_frontier_dense/best_model_metrics.json`
+- `runs/20260325-192838-ppo_frontier_dense/final_evaluation.json`
 
-### `best_model_metrics.json`
-Use when discussing the best checkpoint during training.
-This is helpful if the final saved model is slightly worse than the best intermediate checkpoint.
-
-### `final_evaluation.json`
-Use for the final reported performance of the final saved model.
-If there is a discrepancy between final-model performance and best-checkpoint performance, say so explicitly.
+### Strategic continuation finalists
+- `runs/tournament_hunt/20260326-143040-ppo_strategic_temporal_hard_emphasis_safe_polish/manual_evaluation_summary.json`
+- `runs/tournament_hunt/20260326-143040-ppo_strategic_temporal_hard_emphasis_safe_polish/map_eval_128_baseline/per_map_summary.csv`
+- `runs/tournament_hunt/20260326-144942-ppo_strategic_temporal_safe_polish_all_standard_lowlr/manual_evaluation_summary.json`
+- `runs/tournament_hunt/20260326-144942-ppo_strategic_temporal_safe_polish_all_standard_lowlr/map_eval_128_final/per_map_summary.csv`
 
 ---
 
-## 3) Canonical row format for the master table
-Fill `RESULTS_TABLE_TEMPLATE.csv` using one row per experiment:
-- `experiment_id`
-- `algorithm`
-- `observation`
-- `reward`
-- `map_suite`
-- `seed`
-- `total_timesteps`
-- `mean_coverage`
-- `success_rate`
-- `death_rate`
-- `timeout_rate`
-- `mean_reward`
-- `mean_length`
-- `run_dir`
-- `notes`
+## 2) Claim discipline used in final report
 
-Recommended note examples:
-- `best checkpoint better than final model`
-- `run stopped early`
-- `1 seed only`
-- `trained on hard_only instead of core_generalization`
+- "Best in controlled matrix" refers only to the 3×3 PPO ablation.
+- "Best broad mixed-suite score" refers to 128-episode `all_standard` manual evaluation.
+- "Best hard-map-balanced checkpoint" refers to per-map average and `chokepoint`/`sneaky_enemies` behavior, not only global mean.
+- Any cross-phase comparison is explicitly labeled and not treated as direct apples-to-apples unless evaluation protocol matches.
 
 ---
 
-## 4) Claim discipline
-Until the full comparison exists:
-- call `PPO + frontier_features + dense_coverage` the **leading hypothesis** or **best starting configuration**
-- do **not** call it the final best method unless the numbers support it
+## 3) Canonical report table source
 
-When final results arrive:
-- the **best** approach should be selected primarily by mean coverage
-- break ties with success rate, then death rate
-- mention stability if learning curves clearly differ
+`report/RESULTS_TABLE_TEMPLATE.csv` is now populated from the matrix leaderboard and should be treated as the canonical table source for observation/reward comparison claims.
 
 ---
 
-## 5) Drop-in paragraph templates
+## 4) Rebuild commands (if numbers/plots need refresh)
 
-### Best method
-The best-performing configuration was **[CONFIG]**, which achieved **[MEAN_COVERAGE]** mean coverage, **[SUCCESS_RATE]** success rate, and **[DEATH_RATE]** death rate over **[EPISODES]** evaluation episodes. Relative to the other methods, this suggests that **[OBSERVATION]** provided the most useful decision information and that **[REWARD]** gave the best balance between exploration pressure and safety.
+```bash
+python -m rl_coverage.plot_runs --runs-dir runs/sweep --output-dir results/observation_reward_sweep
+python -m rl_coverage.compare --runs-dir runs/sweep > results/sweep_compare.txt
+```
 
-### Worst method
-The weakest configuration was **[CONFIG]**, which achieved only **[MEAN_COVERAGE]** mean coverage and showed **[MAIN FAILURE MODE]**. This indicates that **[EXPLANATION]**, limiting the agent's ability to convert local decisions into safe long-horizon coverage.
+Per-map reevaluation examples:
 
-### Survival-vs-dense comparison
-Comparing `dense_coverage` to `survival_coverage`, the main tradeoff was **[TRADEOFF]**. The stronger survival penalties **[REDUCED / DID NOT REDUCE]** deaths, but they also **[SLOWED / DID NOT SLOW]** progress toward full coverage.
-
-### Observation comparison
-Across observation spaces, **[OBSERVATION]** performed best because **[EXPLANATION]**. In contrast, **[WORST_OBSERVATION]** underperformed because **[EXPLANATION]**.
-
----
-
-## 6) Plot checklist once data exists
-- [ ] Coverage vs timesteps for the 3×3 PPO matrix
-- [ ] Success rate vs timesteps for the 3×3 PPO matrix
-- [ ] Death rate vs timesteps for the 3×3 PPO matrix
-- [ ] Final comparison table filled from `summary.json`
-- [ ] Best-agent paragraph updated with actual numbers
-- [ ] Worst-agent paragraph updated with actual numbers
-- [ ] Discussion changed from hypothesis language to evidence-backed language
+```bash
+python -m rl_coverage.eval_maps --run-dir runs/tournament_hunt/20260326-143040-ppo_strategic_temporal_hard_emphasis_safe_polish --model best_model --episodes 128 --output-dir map_eval_128_baseline
+python -m rl_coverage.eval_maps --run-dir runs/tournament_hunt/20260326-144942-ppo_strategic_temporal_safe_polish_all_standard_lowlr --model best_model --episodes 128 --output-dir map_eval_128_final
+```
 
 ---
 
-## 7) Minimum acceptable final evidence package
-If time gets tight, the absolute minimum package for a defensible report is:
-1. one completed run for each observation/reward combination in the PPO matrix
-2. one final comparison table
-3. at least one learning-curve plot family
-4. one longer/best-agent run
-5. clear acknowledgment of limitations such as single-seed results
+## 5) Current known gaps
+
+- Multi-seed confidence intervals are not included.
+- DQN is not re-run in the newest strategic continuation phase.
+- `runs/` artifacts are intentionally ignored in git and must be archived separately for full reproducibility outside this machine.

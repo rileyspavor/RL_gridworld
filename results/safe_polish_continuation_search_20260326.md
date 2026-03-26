@@ -6,7 +6,7 @@ Continue improving broad coverage from `runs/tournament_hunt/20260326-143040-ppo
 ## Baseline checked first
 Fresh 128-episode deterministic checks on the current leader:
 
-- Broad mixed-eval mean coverage: **0.845872**
+- Broad mixed-eval mean coverage: **0.846203**
 - Per-map 128-episode mean coverage:
   - `just_go`: **1.000000**
   - `safe`: **1.000000**

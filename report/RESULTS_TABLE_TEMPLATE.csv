@@ -1,11 +1,11 @@
 experiment_id,algorithm,observation,reward,map_suite,seed,total_timesteps,mean_coverage,success_rate,death_rate,timeout_rate,mean_reward,mean_length,run_dir,notes
-A1,PPO,raw_rgb,sparse_coverage,core_generalization,,,,,,,,,
-A2,PPO,raw_rgb,dense_coverage,core_generalization,,,,,,,,,
-A3,PPO,raw_rgb,survival_coverage,core_generalization,,,,,,,,,
-B1,PPO,layered_grid,sparse_coverage,core_generalization,,,,,,,,,
-B2,PPO,layered_grid,dense_coverage,core_generalization,,,,,,,,,
-B3,PPO,layered_grid,survival_coverage,core_generalization,,,,,,,,,
-C1,PPO,frontier_features,sparse_coverage,core_generalization,,,,,,,,,
-C2,PPO,frontier_features,dense_coverage,core_generalization,,,,,,,,,
-C3,PPO,frontier_features,survival_coverage,core_generalization,,,,,,,,,
-D0,DQN,raw_rgb,sparse_coverage,hard_only,,,,,,,,,
+A1,PPO,raw_rgb,sparse_coverage,core_generalization,21,50000,0.120869,0.000000,0.500000,0.500000,1.709167,254.083333,runs/sweep/20260325-192800-ppo_rgb_sparse_sweep,3x3 PPO matrix
+A2,PPO,raw_rgb,dense_coverage,core_generalization,21,50000,0.148681,0.000000,0.500000,0.500000,-53.932526,254.500000,runs/sweep/20260325-192752-ppo_rgb_dense_sweep,3x3 PPO matrix
+A3,PPO,raw_rgb,survival_coverage,core_generalization,21,50000,0.137353,0.000000,0.333333,0.666667,-95.737344,335.000000,runs/sweep/20260325-192810-ppo_rgb_survival_sweep,3x3 PPO matrix
+B1,PPO,layered_grid,sparse_coverage,core_generalization,21,50000,0.146650,0.000000,0.000000,1.000000,2.416667,500.000000,runs/sweep/20260325-192726-ppo_layered_sparse_sweep,3x3 PPO matrix
+B2,PPO,layered_grid,dense_coverage,core_generalization,21,50000,0.240242,0.000000,0.500000,0.500000,-47.623625,258.166667,runs/sweep/20260325-192713-ppo_layered_dense_sweep,3x3 PPO matrix
+B3,PPO,layered_grid,survival_coverage,core_generalization,21,50000,0.242738,0.000000,0.416667,0.583333,-74.404907,296.833333,runs/sweep/20260325-192740-ppo_layered_survival_sweep,3x3 PPO matrix
+C1,PPO,frontier_features,sparse_coverage,core_generalization,21,50000,0.316050,0.000000,0.750000,0.250000,14.217500,136.583333,runs/sweep/20260325-192651-ppo_frontier_sparse_sweep,3x3 PPO matrix
+C2,PPO,frontier_features,dense_coverage,core_generalization,21,50000,0.457763,0.000000,0.666667,0.333333,5.354344,176.833333,runs/sweep/20260325-192639-ppo_frontier_dense_sweep,3x3 PPO matrix winner
+C3,PPO,frontier_features,survival_coverage,core_generalization,21,50000,0.351737,0.000000,0.666667,0.333333,-9.041909,177.500000,runs/sweep/20260325-192702-ppo_frontier_survival_sweep,3x3 PPO matrix
+D0,DQN,raw_rgb,sparse_coverage,hard_only,,,,,,,,,configs/experiments/dqn_rgb_baseline.toml,Config present; not rerun in latest submission sweep

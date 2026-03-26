@@ -86,6 +86,10 @@ The experiment layer adds named suites for easy multi-map training:
 - `easy_to_hard`
 - `hard_only`
 - `core_generalization`
+- `tournament_hard_emphasis`
+- `tournament_safe_polish`
+- `tournament_hard_anchor`
+- `tournament_sneaky_anchor`
 
 ---
 
@@ -109,6 +113,14 @@ That means you can compare representations without rewriting env internals.
 - Includes agent position, coverage ratios, local move affordances, local neighborhood categories, directional frontier/danger signals, nearest frontier offsets, quadrant frontier density, and reachable frontier distance.
 - This is the most targeted representation for MLP policies and is the recommended starting point.
 
+### `temporal_frontier_features`
+- Extends `frontier_features` with short-horizon danger forecasts and action-conditioned safety/readiness signals.
+- Better for policies that must avoid delayed enemy line-of-sight traps.
+
+### `strategic_temporal_frontier_features`
+- Extends `temporal_frontier_features` with reachable-component metrics and map identity features.
+- This is the strongest representation family in the latest tournament-style runs.
+
 ---
 
 ## Reward variants
@@ -131,43 +143,29 @@ Reward swapping is also handled with wrappers, so the same environment can be tr
 
 ---
 
-## Recommended setups
+## Submission Snapshot (measured)
 
-If you only try a few experiments, start here:
+The repository now has completed quantitative evidence beyond the initial design hypothesis.
 
-1. **Best overall starting point:** `ppo_frontier_dense.toml`
-2. **Safer / more conservative alternative:** `ppo_frontier_survival.toml`
-3. **Full-grid structured alternative:** `ppo_layered_dense.toml`
-4. **Baseline to beat:** `dqn_rgb_baseline.toml`
+### Core observation/reward ablation (PPO, 3×3, seed 21)
+- Best of the 9-way sweep: `frontier_features + dense_coverage` with mean coverage **0.458** on `core_generalization` at 50k steps.
+- Worst of the 9-way sweep: `raw_rgb + sparse_coverage` with mean coverage **0.121**.
+- Full table and plots: `results/observation_reward_sweep/leaderboard.csv` and `results/observation_reward_sweep/summary.md`.
+- Full report-quality write-up: `report/REPORT_DRAFT.md` and `results/README.md`.
 
-### Why `ppo_frontier_dense` is the current best bet
+### Strongest broad-coverage continuation
+- `runs/tournament_hunt/20260326-144942-ppo_strategic_temporal_safe_polish_all_standard_lowlr/manual_evaluation_summary.json`
+- 128 deterministic episodes on `all_standard`: mean coverage **0.848**, success **0.516**, death **0.188**.
 
-Without even needing a giant hyperparameter sweep, the environment itself gives away a few things:
+### Best hard-map-balanced checkpoint
+- `runs/tournament_hunt/20260326-143040-ppo_strategic_temporal_hard_emphasis_safe_polish/best_model.zip`
+- 128-episode per-map eval shows stronger `chokepoint` coverage (**0.665**) than the low-LR broad continuation (**0.650**) while keeping easy maps near-solved.
 
-- The task is **long horizon**.
-- The agent needs **coverage planning**, not just reflexive obstacle avoidance.
-- The raw RGB observation is unnecessarily hard for an MLP.
-- Sparse rewards make credit assignment much worse.
-- PPO tends to be more forgiving than DQN on shaped continuous-ish feature inputs in tasks like this.
-
-So the strongest practical default is:
-
-- **Algorithm:** PPO
-- **Observation:** `frontier_features`
-- **Reward:** `dense_coverage`
-- **Training maps:** `core_generalization`
-
-That combination gives the agent direct access to the information it actually needs:
-frontier direction, local move quality, coverage progress, and danger structure.
-
-### What I would expect to happen empirically
-
-- `ppo_frontier_dense` should learn fastest.
-- `ppo_frontier_survival` should reduce catastrophic deaths, possibly at the cost of slightly slower coverage.
-- `ppo_layered_dense` may catch up if you train longer because it keeps more spatial detail.
-- `dqn_rgb_baseline` is mostly there as a reference point and should usually be weaker and slower.
-
-If you have time to run only one serious training job, run `ppo_frontier_dense` first.
+### Recommended configs by objective
+1. **Best broad mixed-suite score:** `configs/experiments/ppo_strategic_temporal_safe_polish_all_standard_lowlr.toml`
+2. **Best hard-map balance:** `configs/experiments/ppo_strategic_temporal_hard_emphasis_safe_polish.toml`
+3. **Best simple baseline to reproduce quickly:** `configs/experiments/ppo_frontier_dense.toml`
+4. **Reward/observation starter benchmark:** `configs/experiments/sweep/ppo_frontier_dense_sweep.toml`
 
 ---
 
@@ -198,6 +196,8 @@ pip install -e coverage-gridworld
 ```bash
 python -m rl_coverage.train --config configs/experiments/ppo_frontier_dense.toml
 ```
+
+This is the safest cold-start config. Strategic tournament configs in `configs/experiments/ppo_strategic_*.toml` are continuation-style and expect existing checkpoint paths.
 
 ### Other built-in experiments
 

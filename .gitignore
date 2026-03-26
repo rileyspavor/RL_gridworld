@@ -3,6 +3,15 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# macOS / Finder
+.DS_Store
+**/.DS_Store
+
+# Local throwaway render tests
+tmp_test_render/
+tmp_test_render2/
+tmp_test_render*/
+
 # C extensions
 *.so
 

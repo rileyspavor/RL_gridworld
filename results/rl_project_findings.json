@@ -1,332 +1,96 @@
 {
-  "artifacts": {
-    "long_run_dir": "runs/20260325-192838-ppo_frontier_dense",
-    "long_run_map_eval_dir": "runs/20260325-192838-ppo_frontier_dense/map_eval_final_model",
-    "sweep_leaderboard_csv": "results/observation_reward_sweep/leaderboard.csv",
-    "sweep_learning_curves_png": "results/observation_reward_sweep/learning_curves.png",
-    "sweep_mean_coverage_png": "results/observation_reward_sweep/mean_coverage_by_combo.png",
-    "sweep_mean_reward_png": "results/observation_reward_sweep/mean_reward_by_combo.png",
-    "sweep_success_png": "results/observation_reward_sweep/success_rate_by_combo.png",
-    "sweep_summary_md": "results/observation_reward_sweep/summary.md"
-  },
-  "conclusions": [
-    "Observation choice mattered more than reward choice: frontier_features dominated every layered/raw_rgb setup in this sweep.",
-    "Within the frontier feature family, dense_coverage was the strongest practical reward; survival_coverage was second and sparse_coverage third.",
-    "A longer 400k-step PPO frontier+dense run reached 25% overall success on the core_generalization suite and >0.52 mean coverage on 24 deterministic eval episodes.",
-    "The remaining performance gap is concentrated on the hardest maps, especially chokepoint and sneaky_enemies."
-  ],
+  "snapshot": "2026-03-26-submission",
   "runtime_fixes": [
-    {
-      "change": "Fixed frontier_features observation space from 53 to 54 dimensions so SB3 training no longer crashes.",
-      "file": "rl_coverage/observations.py"
-    },
-    {
-      "change": "Added rich and tqdm so the documented install supports the SB3 progress bar.",
-      "file": "requirements-train.txt"
-    },
-    {
-      "change": "Made progress bar optional at runtime; training now falls back cleanly if rich/tqdm are absent.",
-      "file": "rl_coverage/train.py"
-    },
-    {
-      "change": "Added CSV/PNG reporting utility for run comparison.",
-      "file": "rl_coverage/plot_runs.py"
-    },
-    {
-      "change": "Added per-map evaluation utility for standard maps.",
-      "file": "rl_coverage/eval_maps.py"
-    }
+    "Fixed frontier_features observation space mismatch (53 -> 54) in rl_coverage/observations.py.",
+    "Added optional progress bar dependency handling in rl_coverage/train.py.",
+    "Added continuation support via algorithm.init_model_path and training.reset_num_timesteps.",
+    "Reapplied continuation overrides after model load in rl_coverage/train.py so low-LR configs are honored.",
+    "Added plotting and per-map evaluation utilities (rl_coverage/plot_runs.py, rl_coverage/eval_maps.py)."
   ],
-  "strongest_run": {
-    "algorithm": "PPO",
-    "best_checkpoint_eval_16eps": {
-      "death_rate": 0.625,
-      "episodes": 16,
-      "max_coverage": 1.0,
-      "mean_coverage": 0.5565681541872274,
-      "mean_length": 135.625,
-      "mean_reward": 30.966004362051176,
-      "min_coverage": 0.11392405063291139,
-      "success_rate": 0.25,
-      "timeout_rate": 0.125
-    },
-    "config_path": "configs/experiments/ppo_frontier_dense.toml",
-    "final_model_eval_24eps": {
-      "death_rate": 0.6666666666666666,
-      "episodes": 24,
-      "max_coverage": 1.0,
-      "mean_coverage": 0.5146231137810198,
-      "mean_length": 78.875,
-      "mean_reward": 31.974127574166037,
-      "min_coverage": 0.06666666666666667,
-      "success_rate": 0.25,
-      "timeout_rate": 0.08333333333333333
-    },
-    "map_suite": "core_generalization",
-    "maps": [
-      "safe",
-      "maze",
-      "chokepoint",
-      "sneaky_enemies"
-    ],
-    "notes": [
-      "Best in-training checkpoint occurred at 325k timesteps with mean_coverage 0.557 and success_rate 0.25 on 16 eval episodes.",
-      "Final model slightly outperformed the reevaluated best checkpoint on the 24-episode aggregate reevaluation (mean_coverage 0.515 vs 0.511).",
-      "The agent reliably solves easy maps (safe fully, just_go nearly fully) but still dies consistently on chokepoint and sneaky_enemies."
-    ],
-    "observation": "frontier_features",
-    "per_map_final_model_eval_16eps": [
-      {
-        "death_rate": 0.0,
-        "episodes": 16,
-        "map_name": "just_go",
-        "max_coverage": 0.86,
-        "mean_coverage": 0.86,
-        "mean_length": 500.0,
-        "mean_reward": 55.97999999999857,
-        "min_coverage": 0.86,
-        "success_rate": 0.0,
-        "timeout_rate": 1.0
-      },
-      {
-        "death_rate": 0.0,
-        "episodes": 16,
-        "map_name": "safe",
-        "max_coverage": 1.0,
-        "mean_coverage": 1.0,
-        "mean_length": 102.0,
-        "mean_reward": 88.90652173913037,
-        "min_coverage": 1.0,
-        "success_rate": 1.0,
-        "timeout_rate": 0.0
-      },
-      {
-        "death_rate": 0.75,
-        "episodes": 16,
-        "map_name": "maze",
-        "max_coverage": 0.9830508474576272,
-        "mean_coverage": 0.7277542372881356,
-        "mean_length": 152.6875,
-        "mean_reward": 31.434915254237012,
-        "min_coverage": 0.5932203389830508,
-        "success_rate": 0.0,
-        "timeout_rate": 0.25
-      },
-      {
-        "death_rate": 1.0,
-        "episodes": 16,
-        "map_name": "chokepoint",
-        "max_coverage": 0.5063291139240507,
-        "mean_coverage": 0.23496835443037975,
-        "mean_length": 18.8125,
-        "mean_reward": 11.927555379746837,
-        "min_coverage": 0.06329113924050633,
-        "success_rate": 0.0,
-        "timeout_rate": 0.0
-      },
-      {
-        "death_rate": 1.0,
-        "episodes": 16,
-        "map_name": "sneaky_enemies",
-        "max_coverage": 0.18666666666666668,
-        "mean_coverage": 0.14833333333333334,
-        "mean_length": 10.875,
-        "mean_reward": 3.6725000000000025,
-        "min_coverage": 0.06666666666666667,
-        "success_rate": 0.0,
-        "timeout_rate": 0.0
-      }
-    ],
-    "reward": "dense_coverage",
-    "run_dir": "runs/20260325-192838-ppo_frontier_dense",
-    "seed": 7,
-    "summary_json_final_model_eval_24eps": {
-      "algorithm": "PPO",
-      "config_path": "/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/configs/experiments/ppo_frontier_dense.toml",
-      "death_rate": 0.6666666666666666,
-      "environment": "sneaky_enemies",
-      "episodes": 24,
-      "map_suite": "core_generalization",
-      "max_coverage": 1.0,
-      "mean_coverage": 0.523251209802379,
-      "mean_length": 79.91666666666667,
-      "mean_reward": 32.88126186223011,
-      "min_coverage": 0.06666666666666667,
-      "observation": "frontier_features",
-      "reward": "dense_coverage",
-      "run_dir": "/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/runs/20260325-192838-ppo_frontier_dense",
-      "success_rate": 0.25,
-      "timeout_rate": 0.08333333333333333,
-      "total_timesteps": 400000
-    },
-    "training_budget": {
-      "eval_episodes": 16,
-      "eval_freq": 25000,
-      "n_envs": 8,
-      "total_timesteps": 400000
-    }
-  },
   "sweep": {
-    "algorithm": "PPO",
-    "leaderboard": [
-      {
-        "algorithm": "PPO",
-        "death_rate": 0.6666666666666666,
-        "map_suite": "core_generalization",
-        "mean_coverage": 0.45776274917679544,
-        "mean_length": 176.83333333333334,
-        "mean_reward": 5.354344289183295,
-        "observation": "frontier_features",
-        "reward": "dense_coverage",
-        "run_dir": "/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/runs/sweep/20260325-192639-ppo_frontier_dense_sweep",
-        "run_name": "20260325-192639-ppo_frontier_dense_sweep",
-        "seed": 21,
-        "success_rate": 0.0,
-        "timeout_rate": 0.3333333333333333,
-        "total_timesteps": 50000
-      },
-      {
-        "algorithm": "PPO",
-        "death_rate": 0.6666666666666666,
-        "map_suite": "core_generalization",
-        "mean_coverage": 0.35173726481535034,
-        "mean_length": 177.5,
-        "mean_reward": -9.041908870709475,
-        "observation": "frontier_features",
-        "reward": "survival_coverage",
-        "run_dir": "/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/runs/sweep/20260325-192702-ppo_frontier_survival_sweep",
-        "run_name": "20260325-192702-ppo_frontier_survival_sweep",
-        "seed": 21,
-        "success_rate": 0.0,
-        "timeout_rate": 0.3333333333333333,
-        "total_timesteps": 50000
-      },
-      {
-        "algorithm": "PPO",
-        "death_rate": 0.75,
-        "map_suite": "core_generalization",
-        "mean_coverage": 0.31604951975846446,
-        "mean_length": 136.58333333333334,
-        "mean_reward": 14.21749999999981,
-        "observation": "frontier_features",
-        "reward": "sparse_coverage",
-        "run_dir": "/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/runs/sweep/20260325-192651-ppo_frontier_sparse_sweep",
-        "run_name": "20260325-192651-ppo_frontier_sparse_sweep",
-        "seed": 21,
-        "success_rate": 0.0,
-        "timeout_rate": 0.25,
-        "total_timesteps": 50000
-      },
-      {
-        "algorithm": "PPO",
-        "death_rate": 0.4166666666666667,
-        "map_suite": "core_generalization",
-        "mean_coverage": 0.24273814891167017,
-        "mean_length": 296.8333333333333,
-        "mean_reward": -74.40490710251613,
-        "observation": "layered_grid",
-        "reward": "survival_coverage",
-        "run_dir": "/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/runs/sweep/20260325-192740-ppo_layered_survival_sweep",
-        "run_name": "20260325-192740-ppo_layered_survival_sweep",
-        "seed": 21,
-        "success_rate": 0.0,
-        "timeout_rate": 0.5833333333333334,
-        "total_timesteps": 50000
-      },
-      {
-        "algorithm": "PPO",
-        "death_rate": 0.5,
-        "map_suite": "core_generalization",
-        "mean_coverage": 0.24024180500752984,
-        "mean_length": 258.1666666666667,
-        "mean_reward": -47.62362473790615,
-        "observation": "layered_grid",
-        "reward": "dense_coverage",
-        "run_dir": "/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/runs/sweep/20260325-192713-ppo_layered_dense_sweep",
-        "run_name": "20260325-192713-ppo_layered_dense_sweep",
-        "seed": 21,
-        "success_rate": 0.0,
-        "timeout_rate": 0.5,
-        "total_timesteps": 50000
-      },
-      {
-        "algorithm": "PPO",
-        "death_rate": 0.5,
-        "map_suite": "core_generalization",
-        "mean_coverage": 0.1486812039878652,
-        "mean_length": 254.5,
-        "mean_reward": -53.93252624045519,
-        "observation": "raw_rgb",
-        "reward": "dense_coverage",
-        "run_dir": "/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/runs/sweep/20260325-192752-ppo_rgb_dense_sweep",
-        "run_name": "20260325-192752-ppo_rgb_dense_sweep",
-        "seed": 21,
-        "success_rate": 0.0,
-        "timeout_rate": 0.5,
-        "total_timesteps": 50000
-      },
-      {
-        "algorithm": "PPO",
-        "death_rate": 0.0,
-        "map_suite": "core_generalization",
-        "mean_coverage": 0.1466495340615468,
-        "mean_length": 500,
-        "mean_reward": 2.4166666666665746,
-        "observation": "layered_grid",
-        "reward": "sparse_coverage",
-        "run_dir": "/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/runs/sweep/20260325-192726-ppo_layered_sparse_sweep",
-        "run_name": "20260325-192726-ppo_layered_sparse_sweep",
-        "seed": 21,
-        "success_rate": 0.0,
-        "timeout_rate": 1.0,
-        "total_timesteps": 50000
-      },
-      {
-        "algorithm": "PPO",
-        "death_rate": 0.3333333333333333,
-        "map_suite": "core_generalization",
-        "mean_coverage": 0.13735300732670208,
-        "mean_length": 335,
-        "mean_reward": -95.73734405235241,
-        "observation": "raw_rgb",
-        "reward": "survival_coverage",
-        "run_dir": "/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/runs/sweep/20260325-192810-ppo_rgb_survival_sweep",
-        "run_name": "20260325-192810-ppo_rgb_survival_sweep",
-        "seed": 21,
-        "success_rate": 0.0,
-        "timeout_rate": 0.6666666666666666,
-        "total_timesteps": 50000
-      },
-      {
-        "algorithm": "PPO",
-        "death_rate": 0.5,
-        "map_suite": "core_generalization",
-        "mean_coverage": 0.12086918172895245,
-        "mean_length": 254.08333333333334,
-        "mean_reward": 1.7091666666667193,
-        "observation": "raw_rgb",
-        "reward": "sparse_coverage",
-        "run_dir": "/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/runs/sweep/20260325-192800-ppo_rgb_sparse_sweep",
-        "run_name": "20260325-192800-ppo_rgb_sparse_sweep",
-        "seed": 21,
-        "success_rate": 0.0,
-        "timeout_rate": 0.5,
-        "total_timesteps": 50000
-      }
-    ],
-    "map_suite": "core_generalization",
-    "maps": [
-      "safe",
-      "maze",
-      "chokepoint",
-      "sneaky_enemies"
-    ],
+    "description": "Controlled PPO 3x3 observation/reward matrix on core_generalization",
     "seed": 21,
     "training_budget_per_run": {
-      "eval_episodes": 8,
-      "eval_freq": 10000,
+      "total_timesteps": 50000,
       "n_envs": 4,
-      "total_timesteps": 50000
+      "eval_freq": 10000,
+      "eval_episodes": 8
+    },
+    "best": {
+      "observation": "frontier_features",
+      "reward": "dense_coverage",
+      "mean_coverage": 0.45776274917679544,
+      "success_rate": 0.0,
+      "death_rate": 0.6666666666666666,
+      "run_dir": "runs/sweep/20260325-192639-ppo_frontier_dense_sweep"
+    },
+    "worst": {
+      "observation": "raw_rgb",
+      "reward": "sparse_coverage",
+      "mean_coverage": 0.12086918172895245,
+      "success_rate": 0.0,
+      "death_rate": 0.5,
+      "run_dir": "runs/sweep/20260325-192800-ppo_rgb_sparse_sweep"
+    },
+    "leaderboard_csv": "results/observation_reward_sweep/leaderboard.csv"
+  },
+  "frontier_long_run": {
+    "run_dir": "runs/20260325-192838-ppo_frontier_dense",
+    "final_model_eval_24eps": {
+      "mean_coverage": 0.523251209802379,
+      "success_rate": 0.25,
+      "death_rate": 0.6666666666666666,
+      "timeout_rate": 0.08333333333333333,
+      "mean_reward": 32.88126186223011,
+      "mean_length": 79.91666666666667
+    },
+    "best_checkpoint_eval_16eps": {
+      "timesteps": 325000,
+      "mean_coverage": 0.5565681541872274,
+      "success_rate": 0.25,
+      "death_rate": 0.625,
+      "timeout_rate": 0.125,
+      "mean_reward": 30.966004362051176,
+      "mean_length": 135.625
     }
+  },
+  "strategic_phase": {
+    "best_broad_scalar": {
+      "run_dir": "runs/tournament_hunt/20260326-144942-ppo_strategic_temporal_safe_polish_all_standard_lowlr",
+      "manual_eval_128": {
+        "mean_coverage": 0.8477912912107559,
+        "success_rate": 0.515625,
+        "death_rate": 0.1875,
+        "timeout_rate": 0.296875
+      }
+    },
+    "best_hard_map_balance": {
+      "run_dir": "runs/tournament_hunt/20260326-143040-ppo_strategic_temporal_hard_emphasis_safe_polish",
+      "manual_eval_128": {
+        "mean_coverage": 0.8462031350568547,
+        "success_rate": 0.5625,
+        "death_rate": 0.1953125,
+        "timeout_rate": 0.2421875
+      },
+      "per_map_128": {
+        "just_go": 1.0,
+        "safe": 1.0,
+        "maze": 0.9957627118644068,
+        "chokepoint": 0.6652492088607594,
+        "sneaky_enemies": 0.5192708333333333
+      }
+    }
+  },
+  "submission_recommendation": {
+    "primary": "runs/tournament_hunt/20260326-143040-ppo_strategic_temporal_hard_emphasis_safe_polish/best_model.zip",
+    "alternate_best_broad_scalar": "runs/tournament_hunt/20260326-144942-ppo_strategic_temporal_safe_polish_all_standard_lowlr/best_model.zip"
+  },
+  "artifacts": {
+    "report": "report/REPORT_DRAFT.md",
+    "rubric_checklist": "report/RUBRIC_CHECKLIST.md",
+    "results_table": "report/RESULTS_TABLE_TEMPLATE.csv",
+    "sweep_summary": "results/observation_reward_sweep/summary.md",
+    "strategic_notes": "results/strategic_recovery_search_20260326.md",
+    "safe_polish_notes": "results/safe_polish_continuation_search_20260326.md"
   }
 }
