@@ -31,6 +31,7 @@ class RewardContext:
     cells_remaining: int
     steps_remaining: int
     coverage_ratio: float
+    steps_since_progress: int
     current_cell_observed: bool
     game_over: bool
     success: bool
@@ -81,6 +82,13 @@ def dense_coverage_reward(context: RewardContext, params: dict[str, Any]) -> flo
         reward_value += float(params.get("future_danger_penalty", 0.0)) / float(context.danger_countdown)
     if context.safe_actions_next <= int(params.get("trap_safe_action_threshold", 0)):
         reward_value += float(params.get("trap_penalty", 0.0))
+
+    no_progress_threshold = int(params.get("no_progress_penalty_start", 0))
+    if no_progress_threshold > 0 and context.steps_since_progress > no_progress_threshold:
+        excess_steps = context.steps_since_progress - no_progress_threshold
+        ramp = excess_steps / max(1.0, float(params.get("no_progress_penalty_ramp", 1.0)))
+        ramp = min(1.0, ramp)
+        reward_value += ramp * float(params.get("no_progress_penalty", 0.0))
     if context.success:
         reward_value += float(params.get("success_bonus", 15.0))
     if context.game_over:
@@ -134,6 +142,7 @@ class RewardVariantWrapper(gym.Wrapper):
         self.recent_positions: deque[int] = deque(maxlen=int(self.params.get("loop_window", 8)))
         self.last_agent_pos = 0
         self.last_total_covered = 1
+        self.steps_since_progress = 0
 
     def reset(self, **kwargs):
         observation, info = self.env.reset(**kwargs)
@@ -142,6 +151,7 @@ class RewardVariantWrapper(gym.Wrapper):
         self.recent_positions = deque(maxlen=int(self.params.get("loop_window", 8)))
         self.last_agent_pos = int(unwrapped.agent_pos)
         self.last_total_covered = int(unwrapped.total_covered_cells)
+        self.steps_since_progress = 0
         self.position_visits[self.last_agent_pos] += 1
         self.recent_positions.append(self.last_agent_pos)
         return observation, info
@@ -169,6 +179,10 @@ class RewardVariantWrapper(gym.Wrapper):
         revisited = self.position_visits[current_pos] > 0 and not info["new_cell_covered"]
 
         recent_loop = current_pos in self.recent_positions
+        if coverage_delta > 0:
+            self.steps_since_progress = 0
+        else:
+            self.steps_since_progress += 1
         self.position_visits[current_pos] += 1
         self.recent_positions.append(current_pos)
         self.last_agent_pos = current_pos
@@ -194,6 +208,7 @@ class RewardVariantWrapper(gym.Wrapper):
             cells_remaining=int(info["cells_remaining"]),
             steps_remaining=int(info["steps_remaining"]),
             coverage_ratio=total_covered / coverable,
+            steps_since_progress=self.steps_since_progress,
             current_cell_observed=current_cell_observed,
             game_over=bool(info["game_over"]),
             success=success,
@@ -220,6 +235,7 @@ class RewardVariantWrapper(gym.Wrapper):
         info["danger_countdown"] = danger_countdown
         info["safe_actions_now"] = safe_actions_now
         info["safe_actions_next"] = safe_actions_next
+        info["steps_since_progress"] = self.steps_since_progress
         return observation, float(shaped_reward), terminated, truncated, info
 
 
