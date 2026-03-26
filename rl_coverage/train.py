@@ -11,6 +11,39 @@ from rl_coverage.env_factory import make_env_builder
 from rl_coverage.metrics import evaluate_model, evaluation_text
 
 
+def _constant_schedule(value: float):
+    return lambda _: value
+
+
+def _apply_loaded_algorithm_overrides(model, algorithm_kwargs: dict) -> None:
+    scalar_attrs = {
+        "gamma",
+        "gae_lambda",
+        "ent_coef",
+        "vf_coef",
+        "batch_size",
+        "n_steps",
+    }
+    for key in scalar_attrs:
+        if key in algorithm_kwargs:
+            setattr(model, key, algorithm_kwargs[key])
+
+    if "learning_rate" in algorithm_kwargs:
+        learning_rate = float(algorithm_kwargs["learning_rate"])
+        model.learning_rate = learning_rate
+        model.lr_schedule = _constant_schedule(learning_rate)
+        if hasattr(model, "policy") and hasattr(model.policy, "optimizer"):
+            for param_group in model.policy.optimizer.param_groups:
+                param_group["lr"] = learning_rate
+
+    if "clip_range" in algorithm_kwargs and hasattr(model, "clip_range"):
+        model.clip_range = _constant_schedule(float(algorithm_kwargs["clip_range"]))
+
+    if "clip_range_vf" in algorithm_kwargs and hasattr(model, "clip_range_vf"):
+        clip_range_vf = algorithm_kwargs["clip_range_vf"]
+        model.clip_range_vf = None if clip_range_vf is None else _constant_schedule(float(clip_range_vf))
+
+
 def _algorithm_registry():
     try:
         from stable_baselines3 import A2C, DQN, PPO
@@ -121,7 +154,10 @@ def main(argv: list[str] | None = None) -> int:
     if init_model_path:
         model = model_cls.load(init_model_path, env=vec_env, device=algorithm_kwargs.get("device", "auto"))
         model.tensorboard_log = str(run_dir / "tensorboard")
+        _apply_loaded_algorithm_overrides(model, algorithm_kwargs)
         print(f"[train] Initialized from existing model: {Path(init_model_path).resolve()}")
+        if "learning_rate" in algorithm_kwargs:
+            print(f"[train] Override learning_rate -> {float(algorithm_kwargs['learning_rate']):g}")
     else:
         model = model_cls(policy, vec_env, **algorithm_kwargs)
         if transfer_model_path:
