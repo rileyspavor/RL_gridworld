@@ -1,0 +1,2 @@
+run_name,algorithm,observation,reward,environment,map_suite,total_timesteps,mean_coverage,success_rate,death_rate,timeout_rate,mean_reward,mean_length,config_path,run_dir
+20260325-192441-smoke_train,PPO,frontier_features,dense_coverage,sneaky_enemies,core_generalization,2048,0.40874478015229676,0.0,0.0,1.0,-54.167440432326,500,/private/tmp/rl_smoke.toml,/Users/rileyspavor_1/Desktop/Code_Projects/Active/rl/Project Code/runs/20260325-192441-smoke_train

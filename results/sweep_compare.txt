@@ -1,0 +1,11 @@
+run                                      algo   obs                reward              coverage  success    death  reward_mean
+------------------------------------------------------------------------------------------------------------------------------
+20260325-192639-ppo_frontier_dense_sweep PPO    frontier_features  dense_coverage         0.458    0.000    0.667        5.354
+20260325-192702-ppo_frontier_survival_sweep PPO    frontier_features  survival_coverage      0.352    0.000    0.667       -9.042
+20260325-192651-ppo_frontier_sparse_sweep PPO    frontier_features  sparse_coverage        0.316    0.000    0.750       14.217
+20260325-192740-ppo_layered_survival_sweep PPO    layered_grid       survival_coverage      0.243    0.000    0.417      -74.405
+20260325-192713-ppo_layered_dense_sweep  PPO    layered_grid       dense_coverage         0.240    0.000    0.500      -47.624
+20260325-192752-ppo_rgb_dense_sweep      PPO    raw_rgb            dense_coverage         0.149    0.000    0.500      -53.933
+20260325-192726-ppo_layered_sparse_sweep PPO    layered_grid       sparse_coverage        0.147    0.000    0.000        2.417
+20260325-192810-ppo_rgb_survival_sweep   PPO    raw_rgb            survival_coverage      0.137    0.000    0.333      -95.737
+20260325-192800-ppo_rgb_sparse_sweep     PPO    raw_rgb            sparse_coverage        0.121    0.000    0.500        1.709

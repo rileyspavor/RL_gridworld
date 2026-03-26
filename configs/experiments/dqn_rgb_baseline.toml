@@ -1,0 +1,50 @@
+[experiment]
+name = "dqn_rgb_baseline"
+seed = 5
+notes = "Baseline close to the original project direction: DQN on raw flattened RGB observations."
+
+[environment]
+id = "sneaky_enemies"
+map_suite = "hard_only"
+render_mode = ""
+activate_game_status = false
+
+[observation]
+name = "raw_rgb"
+
+[reward]
+name = "sparse_coverage"
+
+[reward.params]
+step_penalty = -0.01
+new_cell_reward = 1.0
+success_bonus = 10.0
+death_penalty = -5.0
+timeout_penalty = -1.0
+
+[algorithm]
+name = "DQN"
+policy = "MlpPolicy"
+
+[algorithm.kwargs]
+learning_rate = 0.0001
+buffer_size = 100000
+learning_starts = 10000
+batch_size = 256
+gamma = 0.99
+train_freq = 4
+target_update_interval = 1000
+exploration_fraction = 0.2
+exploration_final_eps = 0.05
+
+[training]
+total_timesteps = 500000
+n_envs = 1
+eval_freq = 25000
+eval_episodes = 12
+deterministic_eval = true
+save_best_model = true
+
+[evaluation]
+episodes = 24
+deterministic = true

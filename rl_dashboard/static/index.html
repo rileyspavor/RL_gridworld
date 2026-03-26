@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RL Coverage Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div>
+          <h1>Coverage Dashboard</h1>
+          <p class="subtitle">Choose the strongest model by coverage.</p>
+        </div>
+        <button id="refresh-btn" class="button">Refresh</button>
+      </header>
+
+      <section class="panel hero-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Best model right now</h2>
+            <p class="section-copy">Coverage-first winner with quick actions.</p>
+          </div>
+        </div>
+        <div id="best-model-card" class="best-model-card"></div>
+
+        <div class="hero-actions">
+          <h3>Quick replay links</h3>
+          <div id="best-action-assets" class="artifact-list inline-links"></div>
+        </div>
+
+        <div class="top-model-compare">
+          <h3>Top model map comparison</h3>
+          <div id="top-model-comparison" class="table-wrap"></div>
+        </div>
+
+        <details class="subpanel filter-subpanel">
+          <summary>Show run counts and paths</summary>
+          <p id="repo-meta" class="meta"></p>
+          <div id="overview-cards" class="cards compact"></div>
+          <div id="overview-notes" class="overview-notes"></div>
+        </details>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Model table</h2>
+            <p class="section-copy">Start with coverage. Expand only if needed.</p>
+          </div>
+        </div>
+
+        <div class="filters comparison-controls">
+          <label>Sort
+            <select id="sort-by">
+              <option value="coverage">Coverage</option>
+              <option value="map_mean">Map mean</option>
+              <option value="sneaky">Sneaky</option>
+              <optgroup label="Advanced">
+                <option value="chokepoint">Chokepoint</option>
+                <option value="just_go">just_go</option>
+                <option value="safe">safe</option>
+                <option value="maze">maze</option>
+                <option value="timesteps">Timesteps</option>
+                <option value="family">Family</option>
+              </optgroup>
+            </select>
+          </label>
+          <label>Order
+            <select id="sort-dir">
+              <option value="desc">High → low</option>
+              <option value="asc">Low → high</option>
+            </select>
+          </label>
+        </div>
+
+        <details class="subpanel filter-subpanel">
+          <summary>Show filters</summary>
+          <div class="filters">
+            <label>Family <select id="filter-family"></select></label>
+            <label>Algorithm <select id="filter-algorithm"></select></label>
+            <label>Observation <select id="filter-observation"></select></label>
+            <label>Reward <select id="filter-reward"></select></label>
+            <label>Map Suite <select id="filter-map-suite"></select></label>
+            <label>Status <select id="filter-status"></select></label>
+            <label>Search <input id="filter-q" type="text" placeholder="run, family, or config" /></label>
+          </div>
+        </details>
+
+        <details class="subpanel filter-subpanel">
+          <summary>Show more columns</summary>
+          <div class="filters comparison-controls">
+            <label class="toggle-option"><input id="show-family-col" type="checkbox" /> Family</label>
+            <label class="toggle-option"><input id="show-map-col" type="checkbox" /> just_go / safe / maze / chokepoint</label>
+            <label class="toggle-option"><input id="show-runtime-col" type="checkbox" /> Success / timesteps</label>
+          </div>
+        </details>
+
+        <div class="table-wrap">
+          <table id="runs-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Model</th>
+                <th class="sort-header" data-sort-key="coverage">Coverage</th>
+                <th class="sort-header" data-sort-key="map_mean">Map Mean</th>
+                <th class="sort-header" data-sort-key="sneaky">sneaky</th>
+                <th>Replay</th>
+                <th class="sort-header col-family" data-sort-key="family">Family</th>
+                <th class="sort-header col-map" data-sort-key="just_go">just_go</th>
+                <th class="sort-header col-map" data-sort-key="safe">safe</th>
+                <th class="sort-header col-map" data-sort-key="maze">maze</th>
+                <th class="sort-header col-map" data-sort-key="chokepoint">chokepoint</th>
+                <th class="col-runtime">Success</th>
+                <th class="sort-header col-runtime" data-sort-key="timesteps">Timesteps</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <details class="panel collapse-panel" id="run-detail-panel">
+        <summary>Selected model details</summary>
+        <div class="collapse-body">
+          <div id="run-detail-empty">Select a model row to inspect details.</div>
+          <div id="run-detail" class="hidden">
+            <div id="run-summary" class="insight-list compact"></div>
+            <div id="run-metrics" class="metric-grid"></div>
+
+            <h3>Replay and action links</h3>
+            <div id="run-action-assets" class="artifact-list"></div>
+
+            <h3>Learning curve (mean coverage)</h3>
+            <canvas id="curve-canvas" width="700" height="220"></canvas>
+
+            <h3>Primary map evaluation</h3>
+            <div id="primary-map-summary"></div>
+
+            <details class="subpanel">
+              <summary>Show all map-eval directories</summary>
+              <div id="map-eval-summary"></div>
+            </details>
+
+            <details class="subpanel">
+              <summary>Show all artifacts and images</summary>
+              <div id="run-artifacts" class="artifact-list"></div>
+              <div id="map-images" class="image-grid"></div>
+            </details>
+          </div>
+        </div>
+      </details>
+
+      <details class="panel collapse-panel">
+        <summary>Baseline deltas</summary>
+        <div class="collapse-body">
+          <p id="delta-reference" class="meta"></p>
+          <div class="two-col">
+            <div>
+              <h3>Improved</h3>
+              <div id="improvement-list" class="insight-list"></div>
+            </div>
+            <div>
+              <h3>Regressed</h3>
+              <div id="regression-list" class="insight-list"></div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="panel collapse-panel">
+        <summary>Combination comparison</summary>
+        <div class="table-wrap collapse-body">
+          <table id="combo-table">
+            <thead>
+              <tr>
+                <th>Combination</th>
+                <th>Runs</th>
+                <th>Mean Coverage</th>
+                <th>Success Rate</th>
+                <th>Mean Reward</th>
+                <th>Death Rate</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="panel collapse-panel">
+        <summary>Results, plots, and reports</summary>
+        <div class="collapse-body">
+          <div id="results-links" class="artifact-list"></div>
+          <div id="sweep-plots" class="image-grid"></div>
+          <div id="sweep-leaderboard" class="table-wrap"></div>
+          <h3>Experiment Inbox Preview</h3>
+          <pre id="inbox-preview" class="code-block"></pre>
+        </div>
+      </details>
+
+      <details class="panel collapse-panel">
+        <summary>Experiment planner &amp; queue</summary>
+        <div class="collapse-body">
+          <form id="planner-form" class="planner-grid">
+            <label>Base Config <select id="planner-base-config" required></select></label>
+            <label>Experiment Name <input id="planner-experiment-name" type="text" placeholder="optional" /></label>
+            <label>Algorithm <select id="planner-algorithm"></select></label>
+            <label>Observation <select id="planner-observation"></select></label>
+            <label>Reward <select id="planner-reward"></select></label>
+            <label>Map Suite <select id="planner-map-suite"></select></label>
+            <label>Total Timesteps <input id="planner-total-timesteps" type="number" min="1" step="1" /></label>
+            <label>Seed <input id="planner-seed" type="number" step="1" /></label>
+            <label>Output Dir <input id="planner-output-dir" type="text" placeholder="runs/..." /></label>
+            <label class="full">Notes <textarea id="planner-notes" rows="2" placeholder="why this run is queued"></textarea></label>
+          </form>
+          <div class="button-row">
+            <button id="preview-btn" class="button" type="button">Generate Preview</button>
+            <button id="queue-btn" class="button" type="button">Add to Queue</button>
+          </div>
+          <h3>Command Preview</h3>
+          <pre id="command-preview" class="code-block"></pre>
+          <h3>Config Override Preview</h3>
+          <pre id="config-preview" class="code-block"></pre>
+          <h3>Queued Specs</h3>
+          <p id="queue-file-path" class="meta"></p>
+          <div class="table-wrap">
+            <table id="queue-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Created</th>
+                  <th>Base Config</th>
+                  <th>Status</th>
+                  <th>Command</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </div>
+    <script src="/static/app.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+[experiment]
+name = "ppo_temporal_frontier_sneaky_enemytransfer"
+output_root = "runs/sneaky_push"
+seed = 17
+notes = "Second-stage temporal transfer: warm-start from the 92-dim temporal sneaky policy and add explicit per-enemy relative state features."
+
+[environment]
+id = "sneaky_enemies"
+map_suite = ""
+render_mode = ""
+activate_game_status = false
+
+[observation]
+name = "temporal_frontier_features"
+
+[reward]
+name = "dense_coverage"
+
+[reward.params]
+step_penalty = -0.02
+new_cell_reward = 1.15
+coverage_progress_weight = 3.5
+invalid_move_penalty = -0.1
+stay_penalty = -0.02
+forced_wait_bonus = 0.03
+forced_wait_safe_action_threshold = 1
+revisit_penalty = -0.02
+loop_penalty = -0.01
+observed_cell_penalty = -0.05
+unsafe_after_rotation_penalty = -1.5
+future_danger_penalty = -0.05
+trap_penalty = -0.05
+trap_safe_action_threshold = 0
+success_bonus = 20.0
+death_penalty = -6.0
+timeout_penalty = -2.0
+
+[algorithm]
+name = "PPO"
+policy = "MlpPolicy"
+transfer_model_path = "runs/sneaky_push/20260325-232007-ppo_temporal_frontier_sneaky_transfer/final_model.zip"
+transfer_observation_prefix = 92
+
+[algorithm.kwargs]
+learning_rate = 0.0001
+n_steps = 1024
+batch_size = 256
+gamma = 0.998
+gae_lambda = 0.97
+clip_range = 0.15
+ent_coef = 0.003
+vf_coef = 0.5
+
+[training]
+total_timesteps = 300000
+n_envs = 8
+eval_freq = 10000
+eval_episodes = 24
+deterministic_eval = true
+save_best_model = true
+
+[evaluation]
+episodes = 96
+deterministic = true

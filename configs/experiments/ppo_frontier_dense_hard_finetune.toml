@@ -1,0 +1,58 @@
+[experiment]
+name = "ppo_frontier_dense_hard_finetune"
+output_root = "runs/finetune"
+seed = 7
+notes = "Fine-tune the best frontier+dense PPO checkpoint on hard maps only to improve chokepoint/sneaky performance."
+
+[environment]
+id = "sneaky_enemies"
+map_suite = "hard_only"
+render_mode = ""
+activate_game_status = false
+
+[observation]
+name = "frontier_features"
+
+[reward]
+name = "dense_coverage"
+
+[reward.params]
+step_penalty = -0.02
+new_cell_reward = 1.1
+coverage_progress_weight = 3.0
+invalid_move_penalty = -0.15
+stay_penalty = -0.08
+revisit_penalty = -0.04
+loop_penalty = -0.03
+observed_cell_penalty = -0.1
+success_bonus = 15.0
+death_penalty = -7.5
+timeout_penalty = -1.5
+
+[algorithm]
+name = "PPO"
+policy = "MlpPolicy"
+init_model_path = "runs/20260325-192838-ppo_frontier_dense/final_model.zip"
+
+[algorithm.kwargs]
+learning_rate = 0.0003
+n_steps = 2048
+batch_size = 256
+gamma = 0.995
+gae_lambda = 0.95
+clip_range = 0.2
+ent_coef = 0.01
+vf_coef = 0.5
+
+[training]
+total_timesteps = 150000
+n_envs = 8
+eval_freq = 10000
+eval_episodes = 16
+deterministic_eval = true
+save_best_model = true
+reset_num_timesteps = false
+
+[evaluation]
+episodes = 32
+deterministic = true

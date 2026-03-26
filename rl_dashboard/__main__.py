@@ -1,4 +1,4 @@
-from rl_coverage.play import main
+from rl_dashboard.server import main
 
 
 if __name__ == "__main__":

@@ -1,0 +1,11 @@
+experiment_id,algorithm,observation,reward,map_suite,seed,total_timesteps,mean_coverage,success_rate,death_rate,timeout_rate,mean_reward,mean_length,run_dir,notes
+A1,PPO,raw_rgb,sparse_coverage,core_generalization,,,,,,,,,
+A2,PPO,raw_rgb,dense_coverage,core_generalization,,,,,,,,,
+A3,PPO,raw_rgb,survival_coverage,core_generalization,,,,,,,,,
+B1,PPO,layered_grid,sparse_coverage,core_generalization,,,,,,,,,
+B2,PPO,layered_grid,dense_coverage,core_generalization,,,,,,,,,
+B3,PPO,layered_grid,survival_coverage,core_generalization,,,,,,,,,
+C1,PPO,frontier_features,sparse_coverage,core_generalization,,,,,,,,,
+C2,PPO,frontier_features,dense_coverage,core_generalization,,,,,,,,,
+C3,PPO,frontier_features,survival_coverage,core_generalization,,,,,,,,,
+D0,DQN,raw_rgb,sparse_coverage,hard_only,,,,,,,,,

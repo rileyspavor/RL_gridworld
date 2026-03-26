@@ -1,0 +1,64 @@
+[experiment]
+name = "ppo_strategic_temporal_winner_transfer_all_standard"
+output_root = "runs/tournament_hunt"
+seed = 239
+notes = "Known-map optimization pass: transfer the current tournament winner into strategic temporal frontier features and train on one even pass over all standard tournament maps."
+
+[environment]
+id = "sneaky_enemies"
+map_suite = "all_standard"
+render_mode = ""
+activate_game_status = false
+
+[observation]
+name = "strategic_temporal_frontier_features"
+
+[reward]
+name = "dense_coverage"
+
+[reward.params]
+step_penalty = -0.015
+new_cell_reward = 1.15
+coverage_progress_weight = 3.5
+invalid_move_penalty = -0.1
+stay_penalty = -0.02
+forced_wait_bonus = 0.02
+forced_wait_safe_action_threshold = 1
+revisit_penalty = -0.015
+loop_penalty = -0.005
+observed_cell_penalty = -0.02
+unsafe_after_rotation_penalty = -1.2
+future_danger_penalty = -0.045
+trap_penalty = -0.045
+trap_safe_action_threshold = 0
+success_bonus = 19.0
+death_penalty = -6.0
+timeout_penalty = -1.0
+
+[algorithm]
+name = "PPO"
+policy = "MlpPolicy"
+transfer_model_path = "runs/tournament_balance/exp_winner_transfer_lowlr_safe_polish/best_model.zip"
+transfer_observation_prefix = 122
+
+[algorithm.kwargs]
+learning_rate = 0.00005
+n_steps = 1024
+batch_size = 256
+gamma = 0.997
+gae_lambda = 0.97
+clip_range = 0.12
+ent_coef = 0.0025
+vf_coef = 0.5
+
+[training]
+total_timesteps = 160000
+n_envs = 8
+eval_freq = 10000
+eval_episodes = 24
+deterministic_eval = true
+save_best_model = true
+
+[evaluation]
+episodes = 64
+deterministic = true

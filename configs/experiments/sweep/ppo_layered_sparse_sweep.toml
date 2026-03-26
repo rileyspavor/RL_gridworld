@@ -1,0 +1,43 @@
+[experiment]
+name = "ppo_layered_sparse_sweep"
+output_root = "runs/sweep"
+seed = 21
+notes = "Targeted PPO sweep for observation/reward comparison."
+
+[environment]
+id = "sneaky_enemies"
+map_suite = "core_generalization"
+render_mode = ""
+activate_game_status = false
+
+[observation]
+name = "layered_grid"
+
+[reward]
+name = "sparse_coverage"
+
+[algorithm]
+name = "PPO"
+policy = "MlpPolicy"
+
+[algorithm.kwargs]
+learning_rate = 0.0003
+n_steps = 1024
+batch_size = 128
+gamma = 0.995
+gae_lambda = 0.95
+clip_range = 0.2
+ent_coef = 0.01
+vf_coef = 0.5
+
+[training]
+total_timesteps = 50000
+n_envs = 4
+eval_freq = 10000
+eval_episodes = 8
+deterministic_eval = true
+save_best_model = true
+
+[evaluation]
+episodes = 12
+deterministic = true
