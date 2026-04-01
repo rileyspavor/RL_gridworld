@@ -1,0 +1,61 @@
+[experiment]
+name = "best_agent_stage2_continuation"
+seed = 7
+output_root = "runs/best_agent"
+notes = "Optional continuation from stage1 best/final model. Update init_model_path before use."
+
+[environment]
+id = "sneaky_enemies"
+map_suite = "all_standard"
+render_mode = ""
+activate_game_status = false
+
+[observation]
+name = "temporal_frontier_features"
+
+[observation.params]
+horizon = 4
+max_enemy_slots = 5
+
+[reward]
+name = "survival_coverage"
+
+[reward.params]
+step_penalty = -0.02
+new_cell_reward = 1.0
+coverage_ratio_weight = 0.15
+no_progress_penalty = -0.05
+observed_cell_penalty = -0.25
+enemy_proximity_penalty = -0.2
+success_bonus = 16.0
+speed_bonus_weight = 2.0
+death_penalty = -10.0
+timeout_penalty = -2.0
+
+[algorithm]
+name = "PPO"
+policy = "MlpPolicy"
+init_model_path = "runs/best_agent/REPLACE_WITH_STAGE1_RUN/best_model"
+
+[algorithm.kwargs]
+learning_rate = 0.00015
+n_steps = 1024
+batch_size = 256
+gamma = 0.995
+gae_lambda = 0.95
+clip_range = 0.15
+ent_coef = 0.005
+vf_coef = 0.5
+
+[training]
+total_timesteps = 200000
+n_envs = 4
+eval_freq = 25000
+eval_episodes = 12
+deterministic_eval = true
+save_best_model = true
+reset_num_timesteps = false
+
+[evaluation]
+episodes = 30
+deterministic = true

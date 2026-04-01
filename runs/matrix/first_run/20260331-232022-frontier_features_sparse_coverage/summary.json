@@ -1,0 +1,19 @@
+{
+  "algorithm": "PPO",
+  "config_path": "/Users/rileyspavor_1/Desktop/Project Code/configs/experiments/frontier_features_sparse_coverage.toml",
+  "death_rate": 0.55,
+  "environment": "sneaky_enemies",
+  "episodes": 20,
+  "map_suite": "all_standard",
+  "max_coverage": 1.0,
+  "mean_coverage": 0.5042756390523897,
+  "mean_length": 157.15,
+  "mean_reward": 35.67850000000018,
+  "min_coverage": 0.04,
+  "observation": "frontier_features",
+  "reward": "sparse_coverage",
+  "run_dir": "/Users/rileyspavor_1/Desktop/Project Code/runs/matrix/20260331-232022-frontier_features_sparse_coverage",
+  "success_rate": 0.2,
+  "timeout_rate": 0.25,
+  "total_timesteps": 180000
+}

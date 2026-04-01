@@ -1,0 +1,60 @@
+{
+  "_config_path": "/Users/rileyspavor_1/Desktop/Project Code/configs/experiments/temporal_frontier_features_sparse_coverage.toml",
+  "algorithm": {
+    "kwargs": {
+      "batch_size": 256,
+      "clip_range": 0.2,
+      "ent_coef": 0.01,
+      "gae_lambda": 0.95,
+      "gamma": 0.995,
+      "learning_rate": 0.0003,
+      "n_steps": 1024,
+      "vf_coef": 0.5
+    },
+    "name": "PPO",
+    "policy": "MlpPolicy"
+  },
+  "environment": {
+    "activate_game_status": false,
+    "id": "sneaky_enemies",
+    "map_suite": "all_standard",
+    "render_mode": ""
+  },
+  "evaluation": {
+    "deterministic": true,
+    "episodes": 20
+  },
+  "experiment": {
+    "device": "auto",
+    "name": "temporal_frontier_features_sparse_coverage",
+    "notes": "Matrix run: temporal frontier observation with sparse coverage reward.",
+    "output_root": "runs/matrix",
+    "seed": 7
+  },
+  "observation": {
+    "name": "temporal_frontier_features",
+    "params": {
+      "horizon": 4,
+      "max_enemy_slots": 5
+    }
+  },
+  "reward": {
+    "name": "sparse_coverage",
+    "params": {
+      "death_penalty": -6.0,
+      "new_cell_reward": 1.0,
+      "step_penalty": -0.01,
+      "success_bonus": 10.0,
+      "timeout_penalty": -1.0
+    }
+  },
+  "training": {
+    "deterministic_eval": true,
+    "eval_episodes": 10,
+    "eval_freq": 20000,
+    "n_envs": 4,
+    "reset_num_timesteps": true,
+    "save_best_model": true,
+    "total_timesteps": 180000
+  }
+}

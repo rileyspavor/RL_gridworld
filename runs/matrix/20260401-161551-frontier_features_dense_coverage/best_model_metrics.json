@@ -1,0 +1,136 @@
+{
+  "episodes": [
+    {
+      "cells_remaining": 0,
+      "coverable_cells": 100,
+      "coverage_ratio": 1.0,
+      "covered_cells": 100,
+      "episode_length": 120,
+      "game_over": false,
+      "steps_remaining": 380,
+      "success": true,
+      "timeout": false,
+      "total_reward": 144.57399999999993
+    },
+    {
+      "cells_remaining": 15,
+      "coverable_cells": 69,
+      "coverage_ratio": 0.782608695652174,
+      "covered_cells": 54,
+      "episode_length": 500,
+      "game_over": false,
+      "steps_remaining": 0,
+      "success": false,
+      "timeout": true,
+      "total_reward": 108.08086956521868
+    },
+    {
+      "cells_remaining": 20,
+      "coverable_cells": 59,
+      "coverage_ratio": 0.6610169491525424,
+      "covered_cells": 39,
+      "episode_length": 38,
+      "game_over": true,
+      "steps_remaining": 462,
+      "success": false,
+      "timeout": false,
+      "total_reward": 39.48067796610167
+    },
+    {
+      "cells_remaining": 70,
+      "coverable_cells": 79,
+      "coverage_ratio": 0.11392405063291139,
+      "covered_cells": 9,
+      "episode_length": 8,
+      "game_over": true,
+      "steps_remaining": 492,
+      "success": false,
+      "timeout": false,
+      "total_reward": 1.5513924050632912
+    },
+    {
+      "cells_remaining": 71,
+      "coverable_cells": 75,
+      "coverage_ratio": 0.05333333333333334,
+      "covered_cells": 4,
+      "episode_length": 3,
+      "game_over": true,
+      "steps_remaining": 497,
+      "success": false,
+      "timeout": false,
+      "total_reward": -4.436
+    },
+    {
+      "cells_remaining": 0,
+      "coverable_cells": 100,
+      "coverage_ratio": 1.0,
+      "covered_cells": 100,
+      "episode_length": 120,
+      "game_over": false,
+      "steps_remaining": 380,
+      "success": true,
+      "timeout": false,
+      "total_reward": 144.57399999999993
+    },
+    {
+      "cells_remaining": 15,
+      "coverable_cells": 69,
+      "coverage_ratio": 0.782608695652174,
+      "covered_cells": 54,
+      "episode_length": 500,
+      "game_over": false,
+      "steps_remaining": 0,
+      "success": false,
+      "timeout": true,
+      "total_reward": 108.08086956521868
+    },
+    {
+      "cells_remaining": 1,
+      "coverable_cells": 59,
+      "coverage_ratio": 0.9830508474576272,
+      "covered_cells": 58,
+      "episode_length": 500,
+      "game_over": false,
+      "steps_remaining": 0,
+      "success": false,
+      "timeout": true,
+      "total_reward": 132.0749152542343
+    },
+    {
+      "cells_remaining": 63,
+      "coverable_cells": 79,
+      "coverage_ratio": 0.20253164556962025,
+      "covered_cells": 16,
+      "episode_length": 15,
+      "game_over": true,
+      "steps_remaining": 485,
+      "success": false,
+      "timeout": false,
+      "total_reward": 10.041772151898734
+    },
+    {
+      "cells_remaining": 72,
+      "coverable_cells": 75,
+      "coverage_ratio": 0.04,
+      "covered_cells": 3,
+      "episode_length": 2,
+      "game_over": true,
+      "steps_remaining": 498,
+      "success": false,
+      "timeout": false,
+      "total_reward": -5.626666666666667
+    }
+  ],
+  "summary": {
+    "death_rate": 0.5,
+    "episodes": 10,
+    "max_coverage": 1.0,
+    "mean_coverage": 0.5619074217450383,
+    "mean_length": 180.6,
+    "mean_reward": 67.83958302410686,
+    "min_coverage": 0.04,
+    "success_rate": 0.2,
+    "timeout_rate": 0.3
+  },
+  "timesteps": 158672
+}
