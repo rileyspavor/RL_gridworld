@@ -171,3 +171,10 @@ cython_debug/
 .pypirc
 
 .idea/
+# macOS / Finder
+.DS_Store
+
+# Editor / temp files
+*.swp
+*.swo
+*~
