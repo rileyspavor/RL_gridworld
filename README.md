@@ -604,4 +604,4 @@ If you want the shortest possible explanation of the repo:
 
 That is the architecture in one page.
 
-Authors: Riley Spavor, Brandon Liang, Rowan Mohammed, George Salib, Karina Verma
+Authors: Riley Spavor
